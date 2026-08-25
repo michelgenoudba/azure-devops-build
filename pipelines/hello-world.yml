@@ -1,0 +1,9 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: echo "Hello from Azure Pipelines — connected to GitHub successfully."
+  displayName: 'Hello World'
