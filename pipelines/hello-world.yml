@@ -7,3 +7,13 @@ pool:
 steps:
 - script: echo "Hello from Azure Pipelines — connected to GitHub successfully."
   displayName: 'Hello World'
+
+- task: AzureCLI@2
+  displayName: 'Verify OIDC connection to Azure'
+  inputs:
+    azureSubscription: 'sc-azure-devops-build'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az account show
+      az group show --name rg-azure-devops-build
