@@ -1,0 +1,26 @@
+data "azurerm_resource_group" "main" {
+    name = "rg-azure-devops-build"
+}
+
+module "networking" {
+    source = "../../modules/networking"
+
+    resource_group_name = data.azurerm_resource_group.main.name
+    location            = data.azurerm_resource_group.main.location
+    vnet_name           = "vnet-azure-devops-build-dev"
+    address_space       = ["10.0.0.0/16"]
+
+    subnets = {
+        "snet-aks" = {
+            address_prefixes = ["10.0.1.0/24"]
+        }
+        "snet-services" = {
+            address_prefixes = ["10.0.2.0/24"]
+        }
+    }
+
+    tags = {
+        project     = "azure-devops-build"
+        environment = "dev"
+    }
+}
