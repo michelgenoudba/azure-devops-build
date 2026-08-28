@@ -16,7 +16,7 @@ version of myself who's forgotten why something was done a certain way.
 | [0002](0002-trunk-based-branching.md) | Use trunk-based development with short-lived feature branches | Accepted |
 | [0003](0003-minimal-network-topology.md) | Accepted | 
 | [0004](0004-keyvault-purge-protection-disabled.md) | Accepted | 
-
+| [0005](0005-environment-separation-strategy.md) | Accepted | 
 ## Conventions
 
 - Numbered sequentially, zero-padded to 4 digits (`0001-`, `0002-`, ...).
