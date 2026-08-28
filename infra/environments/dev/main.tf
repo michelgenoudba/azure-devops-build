@@ -51,3 +51,16 @@ module "keyvault" {
     environment = "dev"
   }
 }
+
+module "log_analytics" {
+  source = "../../modules/log-analytics"
+
+  resource_group_name = data.azurerm_resource_group.main.name
+  location            = data.azurerm_resource_group.main.location
+  name                = "law-azure-devops-build-mg"
+
+  tags = {
+    project     = "azure-devops-build"
+    environment = "dev"
+  }
+}
