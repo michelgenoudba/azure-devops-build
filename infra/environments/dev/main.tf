@@ -38,3 +38,16 @@ module "acr" {
     environment = "dev"
   }
 }
+
+module "keyvault" {
+  source = "../../modules/keyvault"
+
+  resource_group_name = data.azurerm_resource_group.main.name
+  location            = data.azurerm_resource_group.main.location
+  name                = "kv-azure-devops-build-mg"
+
+  tags = {
+    project     = "azure-devops-build"
+    environment = "dev"
+  }
+}
