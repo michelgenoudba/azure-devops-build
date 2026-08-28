@@ -15,6 +15,7 @@ version of myself who's forgotten why something was done a certain way.
 | [0001](0001-scope-identity-to-resource-group.md) | Scope the Azure DevOps service connection identity to the resource group, not the subscription | Accepted |
 | [0002](0002-trunk-based-branching.md) | Use trunk-based development with short-lived feature branches | Accepted |
 | [0003](0003-minimal-network-topology.md) | Accepted | 
+| [0004](0004-keyvault-purge-protection-disabled.md) | Accepted | 
 
 ## Conventions
 
