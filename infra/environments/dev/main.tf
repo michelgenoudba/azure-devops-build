@@ -45,6 +45,7 @@ module "keyvault" {
   resource_group_name = data.azurerm_resource_group.main.name
   location            = data.azurerm_resource_group.main.location
   name                = "kv-azure-devops-build-mg"
+  allowed_ip_ranges   = var.allowed_ip_ranges
 
   tags = {
     project     = "azure-devops-build"
