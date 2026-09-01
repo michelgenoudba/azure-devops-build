@@ -65,3 +65,28 @@ module "log_analytics" {
     environment = "dev"
   }
 }
+
+module "aks" {
+  source = "../../modules/aks"
+
+  resource_group_name = data.azurerm_resource_group.main.name
+  location            = data.azurerm_resource_group.main.location
+  cluster_name        = "aks-azure-devops-build-mg"
+  dns_prefix          = "aksazuredevopsbuildmg"
+
+  vnet_subnet_id             = module.networking.subnet_ids["snet-aks"]
+  log_analytics_workspace_id = module.log_analytics.id
+
+  tags = {
+    project     = "azure-devops-build"
+    environment = "dev"
+  }
+}
+
+# Lets AKS nodes pull images from ACR without any stored credential —
+# same least-privilege pattern as the rest of this project.
+resource "azurerm_role_assignment" "aks_acr_pull" {
+  scope                = module.acr.acr_id
+  role_definition_name = "AcrPull"
+  principal_id         = module.aks.kubelet_identity_object_id
+}
