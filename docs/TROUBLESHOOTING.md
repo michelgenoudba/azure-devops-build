@@ -38,3 +38,36 @@ internals and directories with rapid churn. Moving forward, all local repo
 work happens under `C:\dev\`, not inside a synced folder. Worth remembering
 before phase 02, since Terraform generates much heavier local file churn
 (`.terraform/`, state files) that would hit this same friction constantly.
+
+## AKS cluster creation — three deploy-time errors on first attempt
+
+**Symptom:** `terraform apply` on the AKS module failed three times in a
+row with different errors before succeeding.
+
+**Errors and fixes, in order:**
+
+1. `The VM size of Standard_B2s is not allowed in your subscription in
+   location 'switzerlandnorth'` — Azure restricts which VM sizes are
+   available per subscription/region combination; the classic `B2s`
+   wasn't on the list, but the newer `Standard_B2s_v2` was. Fixed by
+   switching the VM size.
+
+2. `ServiceCidrOverlapExistingSubnetsCidr` — Azure CNI requires an
+   explicit Kubernetes Service CIDR that does not overlap the VNet's own
+   address space, even though service addresses are virtual. The
+   provider default (10.0.0.0/16) collided with our VNet (also
+   10.0.0.0/16). Fixed by explicitly setting `service_cidr =
+   "10.100.0.0/16"` and `dns_service_ip = "10.100.0.10"`.
+
+3. `ErrCode_InsufficientVCPUQuota` for `standardBsv2Family` — the
+   subscription had a 0-vCPU quota limit for the entire Bsv2 burstable
+   family in this region (confirmed via `az vm list-usage --location
+   switzerlandnorth`), separate from the SKU-availability issue in step
+   1. Fixed by switching both node pools to `Standard_D2s_v4`, a size
+   both allowed in the region and in a VM family with real quota
+   headroom (10 vCPUs total regional limit; the cluster uses 4).
+
+**Lesson:** `az vm list-usage --location <region>` is the fastest way to
+see actual, real quota per VM family before guessing at a size — worth
+running early on any new subscription/region rather than iterating
+through apply failures.

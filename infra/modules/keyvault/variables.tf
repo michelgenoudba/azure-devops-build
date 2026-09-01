@@ -36,3 +36,10 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "allowed_ip_ranges" {
+  description = "Public IPs/CIDRs allowed to reach the Key Vault data plane. Supply via a local, gitignored tfvars file — never hardcode a real IP into a committed file."
+  type        = list(string)
+  default     = []
+}
+
