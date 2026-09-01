@@ -17,3 +17,12 @@ output "key_vault_uri" {
 output "log_analytics_workspace_id" {
   value = module.log_analytics.id
 }
+
+output "aks_cluster_name" {
+  value = module.aks.cluster_name
+}
+
+output "aks_oidc_issuer_url" {
+  value = module.aks.oidc_issuer_url
+}
+
