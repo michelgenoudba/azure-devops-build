@@ -1,3 +1,5 @@
+data "azurerm_client_config" "current" {}
+
 resource "azurerm_kubernetes_cluster" "this" {
   name                = var.cluster_name
   resource_group_name = var.resource_group_name
@@ -10,11 +12,19 @@ resource "azurerm_kubernetes_cluster" "this" {
     vm_size         = var.system_node_vm_size
     node_count      = var.system_node_count
     vnet_subnet_id  = var.vnet_subnet_id
-    os_disk_size_gb = 30
+    os_disk_size_gb = 30    
+    upgrade_settings {
+      max_surge = "10%"
+    }
   }
 
   identity {
     type = "SystemAssigned"
+  }
+
+  azure_active_directory_role_based_access_control {
+    tenant_id           = data.azurerm_client_config.current.tenant_id
+    azure_rbac_enabled  = true 
   }
 
   network_profile {
@@ -36,6 +46,9 @@ resource "azurerm_kubernetes_cluster" "this" {
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "user" {
+  upgrade_settings {
+    max_surge = "10%"
+  }
   name                  = "user"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.this.id
   vm_size               = var.user_node_vm_size
