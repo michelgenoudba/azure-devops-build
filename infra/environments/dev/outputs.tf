@@ -26,3 +26,7 @@ output "aks_oidc_issuer_url" {
   value = module.aks.oidc_issuer_url
 }
 
+output "app_workload_identity_client_id" {
+  value = azurerm_user_assigned_identity.app_workload.client_id
+}
+
