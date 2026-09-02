@@ -2,6 +2,8 @@ data "azurerm_resource_group" "main" {
   name = "rg-azure-devops-build"
 }
 
+data "azurerm_client_config" "current" {}
+
 module "networking" {
   source = "../../modules/networking"
 
@@ -89,4 +91,10 @@ resource "azurerm_role_assignment" "aks_acr_pull" {
   scope                = module.acr.acr_id
   role_definition_name = "AcrPull"
   principal_id         = module.aks.kubelet_identity_object_id
+}
+
+resource "azurerm_role_assignment" "aks_rbac_cluster_admin_self" {
+  scope                = module.aks.cluster_id
+  role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
+  principal_id         = data.azurerm_client_config.current.object_id
 }

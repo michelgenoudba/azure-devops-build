@@ -71,3 +71,37 @@ row with different errors before succeeding.
 see actual, real quota per VM family before guessing at a size — worth
 running early on any new subscription/region rather than iterating
 through apply failures.
+
+## Azure AD RBAC setup for AKS — four issues along the way
+
+**Symptom:** Adding AAD RBAC to the AKS module and getting `kubectl`
+working against it took several iterations.
+
+**Errors and fixes, in order:**
+
+1. `An argument named "managed" is not expected here.` — the `managed`
+   argument was removed from the `azurerm` provider in v4.x once Azure
+   retired the legacy AAD integration mode. Fixed by removing the line.
+
+2. `one of admin_group_object_ids,tenant_id must be specified` — the
+   provider requires an explicit `tenant_id` (deliberately not using an
+   AAD admin group, to keep access per-identity). Fixed by adding a
+   `data "azurerm_client_config" "current"` source and setting
+   `tenant_id = data.azurerm_client_config.current.tenant_id`.
+
+3. `kubelogin is not installed` — `az aks install-cli` had been run in a
+   terminal (VS Code's integrated terminal) whose PATH didn't pick up the
+   newly-installed binary. Fixed by rerunning it from a fresh, standalone
+   terminal window and confirming with `where.exe kubelogin`.
+
+4. Perpetual `upgrade_settings` diff on `terraform plan` — AKS applies
+   default `upgrade_settings` (`max_surge = "10%"`) to node pools on
+   creation even when never declared in config, causing Terraform to
+   show the same phantom diff on every future plan. Fixed by explicitly
+   declaring `upgrade_settings { max_surge = "10%" }` on both node pool
+   definitions.
+
+**Lesson:** A clean `terraform apply` only proves the config was
+accepted — it doesn't prove access actually works. After enabling AAD
+RBAC, the real verification is running `kubectl` and seeing a genuine
+403 before any role assignment exists, then success after.
