@@ -33,7 +33,9 @@ resource "azurerm_kubernetes_cluster" "this" {
     service_cidr   = var.service_cidr
     dns_service_ip = var.dns_service_ip
   }
-
+  api_server_access_profile {
+    authorized_ip_ranges = var.authorized_ip_ranges
+  }
   # Enabled now so the cluster doesn't need to be recreated when we wire up
   # federated identity for Key Vault access later in Phase 03.
   oidc_issuer_enabled       = true

@@ -78,7 +78,7 @@ module "aks" {
 
   vnet_subnet_id             = module.networking.subnet_ids["snet-aks"]
   log_analytics_workspace_id = module.log_analytics.id
-
+  authorized_ip_ranges       = var.allowed_ip_ranges
   tags = {
     project     = "azure-devops-build"
     environment = "dev"
