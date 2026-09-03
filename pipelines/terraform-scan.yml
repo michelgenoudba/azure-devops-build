@@ -1,0 +1,20 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - infra/**
+      - pipelines/terraform-scan.yml
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  trivyVersion: '0.74.0'
+
+steps:
+- script: |
+    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v$(trivyVersion)
+    trivy config --severity CRITICAL,HIGH --exit-code 1 infra
+  displayName: 'Terraform security scan (trivy config)'
