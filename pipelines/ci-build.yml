@@ -13,19 +13,34 @@ pool:
 variables:
   acrName: 'acrazuredevopsbuildmg'
   imageName: 'azure-devops-build-app'
+  trivyVersion: '0.74.0'
 
 steps:
+- script: |
+    SHORT_SHA=$(git rev-parse --short HEAD)
+    echo "##vso[task.setvariable variable=imageTag]$SHORT_SHA"
+  displayName: 'Compute image tag'
+
+- script: |
+    IMAGE="$(acrName).azurecr.io/$(imageName)"
+    docker build -t "$IMAGE:$(imageTag)" -t "$IMAGE:latest" ./app
+  displayName: 'Build image'
+
+- script: |
+    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v$(trivyVersion)
+    IMAGE="$(acrName).azurecr.io/$(imageName)"
+    trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 --no-progress "$IMAGE:$(imageTag)"
+  displayName: 'Trivy vulnerability scan'
+
 - task: AzureCLI@2
-  displayName: 'Build and push image to ACR'
+  displayName: 'Push image to ACR'
   inputs:
     azureSubscription: 'sc-azure-devops-build'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
       set -e
-      SHORT_SHA=$(git rev-parse --short HEAD)
       IMAGE="$(acrName).azurecr.io/$(imageName)"
       az acr login --name $(acrName)
-      docker build -t "$IMAGE:$SHORT_SHA" -t "$IMAGE:latest" ./app
-      docker push "$IMAGE:$SHORT_SHA"
+      docker push "$IMAGE:$(imageTag)"
       docker push "$IMAGE:latest"
