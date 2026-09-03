@@ -1,0 +1,31 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - app/**
+      - pipelines/ci-build.yml
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  acrName: 'acrazuredevopsbuildmg'
+  imageName: 'azure-devops-build-app'
+
+steps:
+- task: AzureCLI@2
+  displayName: 'Build and push image to ACR'
+  inputs:
+    azureSubscription: 'sc-azure-devops-build'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      set -e
+      SHORT_SHA=$(git rev-parse --short HEAD)
+      IMAGE="$(acrName).azurecr.io/$(imageName)"
+      az acr login --name $(acrName)
+      docker build -t "$IMAGE:$SHORT_SHA" -t "$IMAGE:latest" ./app
+      docker push "$IMAGE:$SHORT_SHA"
+      docker push "$IMAGE:latest"
