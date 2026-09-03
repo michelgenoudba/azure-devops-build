@@ -17,6 +17,14 @@ variables:
 
 steps:
 - script: |
+    npx --yes html-validate@11.6.2 app/index.html
+  displayName: 'HTML validation'
+
+- script: |
+    npx --yes linkinator@7.6.1 app/index.html
+  displayName: 'Broken link check'
+
+- script: |
     SHORT_SHA=$(git rev-parse --short HEAD)
     echo "##vso[task.setvariable variable=imageTag]$SHORT_SHA"
   displayName: 'Compute image tag'
