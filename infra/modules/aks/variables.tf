@@ -75,3 +75,9 @@ variable "dns_service_ip" {
   type        = string
   default     = "10.100.0.10"
 }
+
+variable "authorized_ip_ranges" {
+  description = "CIDR ranges allowed to reach the AKS API server. Empty list leaves it fully open — always pass real ranges in the environment config."
+  type        = list(string)
+  default     = []
+}

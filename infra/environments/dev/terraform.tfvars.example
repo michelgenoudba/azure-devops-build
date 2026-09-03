@@ -1,0 +1,9 @@
+# Copy to terraform.tfvars and fill in real values — that file is gitignored
+# (see .gitignore) since it holds your actual IP addresses.
+#
+# This example file exists for two reasons: documenting what's required for
+# anyone setting up the project, and giving the CI Terraform security scan
+# (pipelines/terraform-scan.yml) a placeholder value to evaluate against,
+# since it never sees your real gitignored file.
+
+allowed_ip_ranges = ["203.0.113.0/32"]
