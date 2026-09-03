@@ -16,5 +16,5 @@ variables:
 steps:
 - script: |
     curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v$(trivyVersion)
-    trivy config --severity CRITICAL,HIGH --exit-code 1 infra/environments/dev
+    trivy config --severity CRITICAL,HIGH --exit-code 1 --tf-vars infra/environments/dev/terraform.tfvars.example infra/environments/dev
   displayName: 'Terraform security scan (trivy config)'
