@@ -29,6 +29,20 @@ steps:
   displayName: 'Lighthouse CI'
 
 - script: |
+    node -e "
+    const fs = require('fs');
+    const files = fs.readdirSync('.lighthouseci').filter(f => f.startsWith('lhr-') && f.endsWith('.json'));
+    for (const file of files) {
+      const report = JSON.parse(fs.readFileSync('.lighthouseci/' + file, 'utf8'));
+      console.log('Report:', file, '(' + report.finalUrl + ')');
+      for (const [key, cat] of Object.entries(report.categories)) {
+        console.log('  ' + key + ': ' + Math.round(cat.score * 100));
+      }
+    }
+    "
+  displayName: 'Print Lighthouse scores'
+  
+- script: |
     SHORT_SHA=$(git rev-parse --short HEAD)
     echo "##vso[task.setvariable variable=imageTag]$SHORT_SHA"
   displayName: 'Compute image tag'
