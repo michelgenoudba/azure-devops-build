@@ -25,6 +25,10 @@ steps:
   displayName: 'Broken link check'
 
 - script: |
+    npx --yes @lhci/cli@0.15.1 autorun
+  displayName: 'Lighthouse CI'
+
+- script: |
     SHORT_SHA=$(git rev-parse --short HEAD)
     echo "##vso[task.setvariable variable=imageTag]$SHORT_SHA"
   displayName: 'Compute image tag'
