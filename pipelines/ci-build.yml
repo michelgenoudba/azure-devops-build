@@ -28,6 +28,10 @@ steps:
     npx --yes @lhci/cli@0.15.1 autorun
   displayName: 'Lighthouse CI'
 
+- publish: '$(System.DefaultWorkingDirectory)/.lighthouseci'
+  artifact: 'lighthouse-reports'
+  displayName: 'Publish Lighthouse reports'
+  
 - script: |
     node -e "
     const fs = require('fs');
@@ -38,10 +42,25 @@ steps:
       for (const [key, cat] of Object.entries(report.categories)) {
         console.log('  ' + key + ': ' + Math.round(cat.score * 100));
       }
+      console.log();
+      for (const catKey of ['best-practices', 'seo']) {
+        const cat = report.categories[catKey];
+        console.log('-- ' + catKey + ' deductions --');
+        let found = false;
+        for (const ref of cat.auditRefs) {
+          const audit = report.audits[ref.id];
+          if (audit.score !== null && audit.score < 1 && audit.scoreDisplayMode !== 'notApplicable' && audit.scoreDisplayMode !== 'informative') {
+            found = true;
+            console.log('  [' + Math.round(audit.score * 100) + '] ' + audit.title);
+          }
+        }
+        if (!found) console.log('  (nothing scored below 100 \u2014 check informative/manual audits in the full report)');
+        console.log();
+      }
     }
     "
-  displayName: 'Print Lighthouse scores'
-  
+  displayName: 'Print Lighthouse scores and deductions'
+
 - script: |
     SHORT_SHA=$(git rev-parse --short HEAD)
     echo "##vso[task.setvariable variable=imageTag]$SHORT_SHA"
