@@ -28,10 +28,33 @@ steps:
     npx --yes @lhci/cli@0.15.1 autorun
   displayName: 'Lighthouse CI'
 
+- script: |
+    node -e "
+    const fs = require('fs');
+    const files = fs.readdirSync('.lighthouseci').filter(f => f.startsWith('lhr-') && f.endsWith('.json'));
+    for (const file of files) {
+      const report = JSON.parse(fs.readFileSync('.lighthouseci/' + file, 'utf8'));
+      const audit = report.audits['errors-in-console'];
+      console.log('errors-in-console score:', audit.score);
+      if (audit.details && audit.details.items && audit.details.items.length) {
+        for (const item of audit.details.items) {
+          console.log('  source:', item.source);
+          console.log('  description:', item.description);
+          if (item.url) console.log('  url:', item.url);
+          console.log('  ---');
+        }
+      } else {
+        console.log('  (no items array \u2014 dumping raw audit)');
+        console.log(JSON.stringify(audit, null, 2));
+      }
+    }
+    "
+  displayName: 'Print console-error audit detail'
+  
 - publish: '$(System.DefaultWorkingDirectory)/.lighthouseci'
   artifact: 'lighthouse-reports'
   displayName: 'Publish Lighthouse reports'
-  
+
 - script: |
     node -e "
     const fs = require('fs');
