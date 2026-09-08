@@ -19,6 +19,10 @@ module "networking" {
     "snet-services" = {
       address_prefixes = ["10.0.2.0/24"]
     }
+    "snet-agents" = {
+      address_prefixes  = ["10.0.3.0/24"]
+      service_endpoints = ["Microsoft.KeyVault"]
+    }
   }
 
   tags = {
@@ -48,6 +52,7 @@ module "keyvault" {
   location            = data.azurerm_resource_group.main.location
   name                = "kv-azure-devops-build-mg"
   allowed_ip_ranges   = var.allowed_ip_ranges
+  allowed_subnet_ids  = [module.networking.subnet_ids["snet-agents"]]
 
   tags = {
     project     = "azure-devops-build"
@@ -79,6 +84,23 @@ module "aks" {
   vnet_subnet_id             = module.networking.subnet_ids["snet-aks"]
   log_analytics_workspace_id = module.log_analytics.id
   authorized_ip_ranges       = var.allowed_ip_ranges
+  tags = {
+    project     = "azure-devops-build"
+    environment = "dev"
+  }
+}
+
+module "agent_vm" {
+  source = "../../modules/agent-vm"
+
+  resource_group_name = data.azurerm_resource_group.main.name
+  location            = data.azurerm_resource_group.main.location
+  subnet_id           = module.networking.subnet_ids["snet-agents"]
+  key_vault_id        = module.keyvault.key_vault_id
+  vm_size             = var.agent_vm_size
+  zone                = var.agent_vm_zone
+  allowed_ip_ranges   = var.allowed_ip_ranges
+
   tags = {
     project     = "azure-devops-build"
     environment = "dev"

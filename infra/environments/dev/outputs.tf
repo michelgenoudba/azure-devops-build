@@ -30,3 +30,7 @@ output "app_workload_identity_client_id" {
   value = azurerm_user_assigned_identity.app_workload.client_id
 }
 
+output "agent_vm_public_ip" {
+  value = module.agent_vm.public_ip_address
+}
+
