@@ -145,3 +145,21 @@ resource "azurerm_role_assignment" "app_workload_kv_secrets_user" {
   role_definition_name = "Key Vault Secrets User"
   principal_id         = azurerm_user_assigned_identity.app_workload.principal_id
 }
+
+# Lets this Terraform identity write/read secrets directly (e.g. the test secret
+# below) — separate from the AKS workload's own scoped "Secrets User" grant above.
+resource "azurerm_role_assignment" "self_kv_secrets_officer" {
+  scope                = module.keyvault.key_vault_id
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id         = data.azurerm_client_config.current.object_id
+}
+
+# Scratch secret used to verify AKS workload identity end-to-end. Safe to delete
+# once that verification is done.
+resource "azurerm_key_vault_secret" "workload_identity_test" {
+  name         = "workload-identity-test"
+  value        = "hello from AKS workload identity"
+  key_vault_id = module.keyvault.key_vault_id
+
+  depends_on = [azurerm_role_assignment.self_kv_secrets_officer]
+}
