@@ -1,18 +1,19 @@
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_kubernetes_cluster" "this" {
-  name                = var.cluster_name
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  dns_prefix          = var.dns_prefix
-  kubernetes_version  = var.kubernetes_version
+  name                     = var.cluster_name
+  resource_group_name      = var.resource_group_name
+  location                 = var.location
+  dns_prefix               = var.dns_prefix
+  kubernetes_version       = var.kubernetes_version
+  private_cluster_enabled  = var.private_cluster_enabled
 
   default_node_pool {
     name            = "system"
     vm_size         = var.system_node_vm_size
     node_count      = var.system_node_count
     vnet_subnet_id  = var.vnet_subnet_id
-    os_disk_size_gb = 30    
+    os_disk_size_gb = 30
     upgrade_settings {
       max_surge = "10%"
     }
@@ -23,8 +24,8 @@ resource "azurerm_kubernetes_cluster" "this" {
   }
 
   azure_active_directory_role_based_access_control {
-    tenant_id           = data.azurerm_client_config.current.tenant_id
-    azure_rbac_enabled  = true 
+    tenant_id          = data.azurerm_client_config.current.tenant_id
+    azure_rbac_enabled = true
   }
 
   network_profile {
@@ -33,9 +34,14 @@ resource "azurerm_kubernetes_cluster" "this" {
     service_cidr   = var.service_cidr
     dns_service_ip = var.dns_service_ip
   }
-  api_server_access_profile {
-    authorized_ip_ranges = var.authorized_ip_ranges
+
+  dynamic "api_server_access_profile" {
+    for_each = var.private_cluster_enabled ? [] : [1]
+    content {
+      authorized_ip_ranges = var.authorized_ip_ranges
+    }
   }
+
   # Enabled now so the cluster doesn't need to be recreated when we wire up
   # federated identity for Key Vault access later in Phase 03.
   oidc_issuer_enabled       = true

@@ -81,3 +81,9 @@ variable "authorized_ip_ranges" {
   type        = list(string)
   default     = []
 }
+
+variable "private_cluster_enabled" {
+  description = "Whether the AKS API server has no public endpoint. Requires reaching it from inside the VNet (e.g. the self-hosted agent) or via az aks command invoke."
+  type        = bool
+  default     = true
+}

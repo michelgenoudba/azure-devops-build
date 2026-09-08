@@ -22,6 +22,7 @@ variable "subnets" {
   description = "Map of subnets to create. Key is the subnet name, value holds its address prefixes."
   type = map(object({
     address_prefixes = list(string)
+    service_endpoints = optional(list(string), [])
   }))
 }
 

@@ -43,3 +43,8 @@ variable "allowed_ip_ranges" {
   default     = []
 }
 
+variable "allowed_subnet_ids" {
+  description = "Subnet IDs allowed to reach this Key Vault privately over a VNet service endpoint."
+  type        = list(string)
+  default     = []
+}
