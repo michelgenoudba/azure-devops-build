@@ -27,17 +27,3 @@ variable "agent_vm_size" {
   type        = string
   default     = "Standard_D2s_v3"
 }
-
-resource "azurerm_role_assignment" "self_kv_secrets_officer" {
-  scope                = module.keyvault.key_vault_id
-  role_definition_name = "Key Vault Secrets Officer"
-  principal_id         = data.azurerm_client_config.current.object_id
-}
-
-resource "azurerm_key_vault_secret" "workload_identity_test" {
-  name         = "workload-identity-test"
-  value        = "hello from AKS workload identity"
-  key_vault_id = module.keyvault.key_vault_id
-
-  depends_on = [azurerm_role_assignment.self_kv_secrets_officer]
-}
