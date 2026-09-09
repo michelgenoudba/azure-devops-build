@@ -1,0 +1,21 @@
+{{ include "static-site.fullname" . }} deployed to namespace {{ .Release.Namespace }}.
+
+Check rollout status:
+  kubectl rollout status deployment/{{ include "static-site.fullname" . }} -n {{ .Release.Namespace }}
+
+Reach the app:
+{{- if eq .Values.service.type "LoadBalancer" }}
+  kubectl get svc {{ include "static-site.fullname" . }} -n {{ .Release.Namespace }} -w
+  # then browse to the EXTERNAL-IP once it's assigned
+{{- else if eq .Values.service.type "NodePort" }}
+  export NODE_PORT=$(kubectl get svc {{ include "static-site.fullname" . }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}")
+  export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo "http://$NODE_IP:$NODE_PORT"
+{{- else }}
+  kubectl port-forward svc/{{ include "static-site.fullname" . }} -n {{ .Release.Namespace }} 8080:{{ .Values.service.port }}
+  # then browse to http://localhost:8080
+{{- end }}
+
+Remember: the AKS API server is private — run kubectl/helm from inside the VNet
+(the self-hosted agent, vm-agent-dev) or via `az aks command invoke`, not
+directly from an arbitrary machine.
