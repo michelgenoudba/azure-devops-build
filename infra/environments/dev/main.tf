@@ -121,6 +121,12 @@ resource "azurerm_role_assignment" "aks_rbac_cluster_admin_self" {
   principal_id         = data.azurerm_client_config.current.object_id
 }
 
+resource "azurerm_role_assignment" "aks_rbac_cluster_admin_pipeline" {
+  scope                = module.aks.cluster_id
+  role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
+  principal_id         = var.pipeline_service_principal_object_id
+}
+
 resource "azurerm_user_assigned_identity" "app_workload" {
   name                = "id-azure-devops-build-app"
   resource_group_name = data.azurerm_resource_group.main.name
