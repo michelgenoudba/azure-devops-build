@@ -87,13 +87,13 @@ stages:
 
           - script: |
               IMAGE="$(acrName).azurecr.io/$(imageName)"
-              docker build -t "$IMAGE:$(imageTag)" -t "$IMAGE:latest" ./app
+              docker build -t "$IMAGE:$(setImageTag.imageTag)" -t "$IMAGE:latest" ./app
             displayName: 'Build image'
 
           - script: |
               curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v$(trivyVersion)
               IMAGE="$(acrName).azurecr.io/$(imageName)"
-              trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 --no-progress "$IMAGE:$(imageTag)"
+              trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 --no-progress "$IMAGE:$(setImageTag.imageTag)"
             displayName: 'Trivy vulnerability scan'
 
           - task: AzureCLI@2
@@ -106,7 +106,7 @@ stages:
                 set -e
                 IMAGE="$(acrName).azurecr.io/$(imageName)"
                 az acr login --name $(acrName)
-                docker push "$IMAGE:$(imageTag)"
+                docker push "$IMAGE:$(setImageTag.imageTag)"
                 docker push "$IMAGE:latest"
   - stage: Deploy
     dependsOn: Build
