@@ -14,90 +14,128 @@ variables:
   acrName: 'acrazuredevopsbuildmg'
   imageName: 'azure-devops-build-app'
   trivyVersion: '0.74.0'
+  aksResourceGroup: 'rg-azure-devops-build'
+  aksClusterName: 'aks-azure-devops-build-mg'
 
-steps:
-- script: |
-    npx --yes html-validate@11.6.2 app/index.html
-  displayName: 'HTML validation'
+stages:
+  - stage: Build
+    jobs:
+      - job: BuildAndPush
+        steps:
+          - script: |
+              npx --yes html-validate@11.6.2 app/index.html
+            displayName: 'HTML validation'
 
-- script: |
-    npx --yes linkinator@7.6.1 app/index.html
-  displayName: 'Broken link check'
+          - script: |
+              npx --yes linkinator@7.6.1 app/index.html
+            displayName: 'Broken link check'
 
-- script: |
-    npx --yes @lhci/cli@0.15.1 autorun
-  displayName: 'Lighthouse CI'
+          - script: |
+              npx --yes @lhci/cli@0.15.1 autorun
+            displayName: 'Lighthouse CI'
 
-- script: |
-    node -e "
-    const fs = require('fs');
-    const files = fs.readdirSync('.lighthouseci').filter(f => f.startsWith('lhr-') && f.endsWith('.json'));
-    for (const file of files) {
-      const report = JSON.parse(fs.readFileSync('.lighthouseci/' + file, 'utf8'));
-      const audit = report.audits['errors-in-console'];
-      console.log(JSON.stringify(audit.details.items, null, 2));
-    }
-    "
-  displayName: 'Print console-error audit detail'
+          - script: |
+              node -e "
+              const fs = require('fs');
+              const files = fs.readdirSync('.lighthouseci').filter(f => f.startsWith('lhr-') && f.endsWith('.json'));
+              for (const file of files) {
+                const report = JSON.parse(fs.readFileSync('.lighthouseci/' + file, 'utf8'));
+                const audit = report.audits['errors-in-console'];
+                console.log(JSON.stringify(audit.details.items, null, 2));
+              }
+              "
+            displayName: 'Print console-error audit detail'
 
-- publish: '$(System.DefaultWorkingDirectory)/.lighthouseci'
-  artifact: 'lighthouse-reports'
-  displayName: 'Publish Lighthouse reports'
+          - publish: '$(System.DefaultWorkingDirectory)/.lighthouseci'
+            artifact: 'lighthouse-reports'
+            displayName: 'Publish Lighthouse reports'
 
-- script: |
-    node -e "
-    const fs = require('fs');
-    const files = fs.readdirSync('.lighthouseci').filter(f => f.startsWith('lhr-') && f.endsWith('.json'));
-    for (const file of files) {
-      const report = JSON.parse(fs.readFileSync('.lighthouseci/' + file, 'utf8'));
-      console.log('Report:', file, '(' + report.finalUrl + ')');
-      for (const [key, cat] of Object.entries(report.categories)) {
-        console.log('  ' + key + ': ' + Math.round(cat.score * 100));
-      }
-      console.log();
-      for (const catKey of ['best-practices', 'seo']) {
-        const cat = report.categories[catKey];
-        console.log('-- ' + catKey + ' deductions --');
-        let found = false;
-        for (const ref of cat.auditRefs) {
-          const audit = report.audits[ref.id];
-          if (audit.score !== null && audit.score < 1 && audit.scoreDisplayMode !== 'notApplicable' && audit.scoreDisplayMode !== 'informative') {
-            found = true;
-            console.log('  [' + Math.round(audit.score * 100) + '] ' + audit.title);
-          }
-        }
-        if (!found) console.log('  (nothing scored below 100 \u2014 check informative/manual audits in the full report)');
-        console.log();
-      }
-    }
-    "
-  displayName: 'Print Lighthouse scores and deductions'
+          - script: |
+              node -e "
+              const fs = require('fs');
+              const files = fs.readdirSync('.lighthouseci').filter(f => f.startsWith('lhr-') && f.endsWith('.json'));
+              for (const file of files) {
+                const report = JSON.parse(fs.readFileSync('.lighthouseci/' + file, 'utf8'));
+                console.log('Report:', file, '(' + report.finalUrl + ')');
+                for (const [key, cat] of Object.entries(report.categories)) {
+                  console.log('  ' + key + ': ' + Math.round(cat.score * 100));
+                }
+              console.log();
+              for (const catKey of ['best-practices', 'seo']) {
+                const cat = report.categories[catKey];
+                console.log('-- ' + catKey + ' deductions --');
+                let found = false;
+                for (const ref of cat.auditRefs) {
+                  const audit = report.audits[ref.id];
+                  if (audit.score !== null && audit.score < 1 && audit.scoreDisplayMode !== 'notApplicable' && audit.scoreDisplayMode !== 'informative') {
+                    found = true;
+                    console.log('  [' + Math.round(audit.score * 100) + '] ' + audit.title);
+                  }
+                }
+                if (!found) console.log('  (nothing scored below 100 — check informative/manual audits in the full report)');
+                console.log();
+              }
+              }
+              "
+            displayName: 'Print Lighthouse scores and deductions'
 
-- script: |
-    SHORT_SHA=$(git rev-parse --short HEAD)
-    echo "##vso[task.setvariable variable=imageTag]$SHORT_SHA"
-  displayName: 'Compute image tag'
+          - script: |
+              SHORT_SHA=$(git rev-parse --short HEAD)
+              echo "##vso[task.setvariable variable=imageTag;isOutput=true]$SHORT_SHA"
+            name: setImageTag
+            displayName: 'Compute image tag'
 
-- script: |
-    IMAGE="$(acrName).azurecr.io/$(imageName)"
-    docker build -t "$IMAGE:$(imageTag)" -t "$IMAGE:latest" ./app
-  displayName: 'Build image'
+          - script: |
+              IMAGE="$(acrName).azurecr.io/$(imageName)"
+              docker build -t "$IMAGE:$(setImageTag.imageTag)" -t "$IMAGE:latest" ./app
+            displayName: 'Build image'
 
-- script: |
-    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v$(trivyVersion)
-    IMAGE="$(acrName).azurecr.io/$(imageName)"
-    trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 --no-progress "$IMAGE:$(imageTag)"
-  displayName: 'Trivy vulnerability scan'
+          - script: |
+              curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v$(trivyVersion)
+              IMAGE="$(acrName).azurecr.io/$(imageName)"
+              trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 --no-progress "$IMAGE:$(setImageTag.imageTag)"
+            displayName: 'Trivy vulnerability scan'
 
-- task: AzureCLI@2
-  displayName: 'Push image to ACR'
-  inputs:
-    azureSubscription: 'sc-azure-devops-build'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      set -e
-      IMAGE="$(acrName).azurecr.io/$(imageName)"
-      az acr login --name $(acrName)
-      docker push "$IMAGE:$(imageTag)"
-      docker push "$IMAGE:latest"
+          - task: AzureCLI@2
+            displayName: 'Push image to ACR'
+            inputs:
+              azureSubscription: 'sc-azure-devops-build'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                set -e
+                IMAGE="$(acrName).azurecr.io/$(imageName)"
+                az acr login --name $(acrName)
+                docker push "$IMAGE:$(setImageTag.imageTag)"
+                docker push "$IMAGE:latest"
+  - stage: Deploy
+    dependsOn: Build
+    variables:
+      imageTag: $[ stageDependencies.Build.BuildAndPush.outputs['setImageTag.imageTag'] ]
+    pool:
+      name: self-hosted-dev
+    jobs:
+      - deployment: DeployToAKS
+        environment: dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+
+                - task: AzureCLI@2
+                  displayName: 'Deploy to AKS'
+                  inputs:
+                    azureSubscription: 'sc-azure-devops-build'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      set -e
+                      az aks get-credentials \
+                        --resource-group $(aksResourceGroup) \
+                        --name $(aksClusterName) \
+                        --overwrite-existing
+                      helm upgrade --install $(imageName) ./helm/static-site \
+                        --namespace app \
+                        --create-namespace \
+                        --set image.tag=$(imageTag)

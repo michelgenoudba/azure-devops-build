@@ -27,3 +27,8 @@ variable "agent_vm_size" {
   type        = string
   default     = "Standard_D2s_v3"
 }
+
+variable "pipeline_service_principal_object_id" {
+  description = "Object ID of the sc-azure-devops-build service connection's service principal — granted Kubernetes-level Azure RBAC access on the AKS cluster so the CD pipeline can run kubectl/helm against it."
+  type        = string
+}
