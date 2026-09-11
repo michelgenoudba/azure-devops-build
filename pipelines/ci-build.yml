@@ -108,15 +108,15 @@ stages:
                 az acr login --name $(acrName)
                 docker push "$IMAGE:$(setImageTag.imageTag)"
                 docker push "$IMAGE:latest"
-  - stage: Deploy
+  - stage: DeployStaging
     dependsOn: Build
     variables:
       imageTag: $[ stageDependencies.Build.BuildAndPush.outputs['setImageTag.imageTag'] ]
     pool:
       name: self-hosted-dev
     jobs:
-      - deployment: DeployToAKS
-        environment: dev
+      - deployment: DeployToStaging
+        environment: staging
         strategy:
           runOnce:
             deploy:
@@ -124,7 +124,7 @@ stages:
                 - checkout: self
 
                 - task: AzureCLI@2
-                  displayName: 'Deploy to AKS'
+                  displayName: 'Deploy to AKS (staging)'
                   inputs:
                     azureSubscription: 'sc-azure-devops-build'
                     scriptType: 'bash'
@@ -135,7 +135,41 @@ stages:
                         --resource-group $(aksResourceGroup) \
                         --name $(aksClusterName) \
                         --overwrite-existing
-                      helm upgrade --install $(imageName) ./helm/static-site \
-                        --namespace app \
+                      helm upgrade --install $(imageName)-staging ./helm/static-site \
+                        --namespace app-staging \
+                        --create-namespace \
+                        --set image.tag=$(imageTag)
+
+  - stage: DeployProd
+    dependsOn:
+      - Build
+      - DeployStaging
+    variables:
+      imageTag: $[ stageDependencies.Build.BuildAndPush.outputs['setImageTag.imageTag'] ]
+    pool:
+      name: self-hosted-dev
+    jobs:
+      - deployment: DeployToProd
+        environment: prod
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+
+                - task: AzureCLI@2
+                  displayName: 'Deploy to AKS (prod)'
+                  inputs:
+                    azureSubscription: 'sc-azure-devops-build'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      set -e
+                      az aks get-credentials \
+                        --resource-group $(aksResourceGroup) \
+                        --name $(aksClusterName) \
+                        --overwrite-existing
+                      helm upgrade --install $(imageName)-prod ./helm/static-site \
+                        --namespace app-prod \
                         --create-namespace \
                         --set image.tag=$(imageTag)
