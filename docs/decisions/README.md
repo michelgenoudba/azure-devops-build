@@ -14,10 +14,14 @@ version of myself who's forgotten why something was done a certain way.
 |---|---|---|
 | [0001](0001-scope-identity-to-resource-group.md) | Scope the Azure DevOps service connection identity to the resource group, not the subscription | Accepted |
 | [0002](0002-trunk-based-branching.md) | Use trunk-based development with short-lived feature branches | Accepted |
-| [0003](0003-minimal-network-topology.md) | Accepted | 
-| [0004](0004-keyvault-purge-protection-disabled.md) | Accepted | 
-| [0005](0005-environment-separation-strategy.md) | Accepted | 
-| [0006](0006-azure-cni-networking-for-aks.md) | Accepted |
+| [0003](0003-minimal-network-topology.md) | Use a single VNet with two subnets, no further segmentation | Accepted |
+| [0004](0004-keyvault-purge-protection-disabled.md) | Disable purge protection on the dev Key Vault | Accepted |
+| [0005](0005-environment-separation-strategy.md) | Environment separation strategy | Accepted |
+| [0006](0006-azure-cni-networking-for-aks.md) | Azure CNI networking for AKS | Accepted |
+| [0007](0007-azure-rback-for-kubernetes-authorization.md) | Azure RBAC for Kubernetes authorization | Accepted |
+| [0008](0008-single-pipeline-for-ci-and-cd.md) | Single multi-stage pipeline for CI and CD | Accepted |
+| [0009](0009-shared-cluster-namespace-environments.md) | Shared cluster, namespace-based environment separation for staging/prod | Accepted |
+
 ## Conventions
 
 - Numbered sequentially, zero-padded to 4 digits (`0001-`, `0002-`, ...).
