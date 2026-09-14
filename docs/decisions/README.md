@@ -21,6 +21,7 @@ version of myself who's forgotten why something was done a certain way.
 | [0007](0007-azure-rback-for-kubernetes-authorization.md) | Azure RBAC for Kubernetes authorization | Accepted |
 | [0008](0008-single-pipeline-for-ci-and-cd.md) | Single multi-stage pipeline for CI and CD | Accepted |
 | [0009](0009-shared-cluster-namespace-environments.md) | Shared cluster, namespace-based environment separation for staging/prod | Accepted |
+| [0010](0010-canary-deployment-for-prod.md) | Canary deployment strategy for prod via shared Service selector | Accepted |
 
 ## Conventions
 

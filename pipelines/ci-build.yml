@@ -140,7 +140,7 @@ stages:
                         --create-namespace \
                         --set image.tag=$(imageTag)
 
-  - stage: DeployProd
+  - stage: CanaryProd
     dependsOn:
       - Build
       - DeployStaging
@@ -149,7 +149,40 @@ stages:
     pool:
       name: self-hosted-dev
     jobs:
-      - deployment: DeployToProd
+      - job: DeployCanary
+        steps:
+          - checkout: self
+
+          - task: AzureCLI@2
+            displayName: 'Deploy canary to AKS (prod)'
+            inputs:
+              azureSubscription: 'sc-azure-devops-build'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                set -e
+                az aks get-credentials \
+                  --resource-group $(aksResourceGroup) \
+                  --name $(aksClusterName) \
+                  --overwrite-existing
+                helm upgrade --install $(imageName)-prod ./helm/static-site \
+                  --namespace app-prod \
+                  --create-namespace \
+                  --reuse-values \
+                  --set canary.enabled=true \
+                  --set canary.image.tag=$(imageTag) \
+                  --set canary.replicaCount=1
+
+  - stage: PromoteProd
+    dependsOn:
+      - Build
+      - CanaryProd
+    variables:
+      imageTag: $[ stageDependencies.Build.BuildAndPush.outputs['setImageTag.imageTag'] ]
+    pool:
+      name: self-hosted-dev
+    jobs:
+      - deployment: PromoteToProd
         environment: prod
         strategy:
           runOnce:
@@ -158,7 +191,7 @@ stages:
                 - checkout: self
 
                 - task: AzureCLI@2
-                  displayName: 'Deploy to AKS (prod)'
+                  displayName: 'Promote canary to stable (prod)'
                   inputs:
                     azureSubscription: 'sc-azure-devops-build'
                     scriptType: 'bash'
@@ -171,5 +204,5 @@ stages:
                         --overwrite-existing
                       helm upgrade --install $(imageName)-prod ./helm/static-site \
                         --namespace app-prod \
-                        --create-namespace \
-                        --set image.tag=$(imageTag)
+                        --set image.tag=$(imageTag) \
+                        --set canary.enabled=false
