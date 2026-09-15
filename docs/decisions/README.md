@@ -23,6 +23,7 @@ version of myself who's forgotten why something was done a certain way.
 | [0009](0009-shared-cluster-namespace-environments.md) | Shared cluster, namespace-based environment separation for staging/prod | Accepted |
 | [0010](0010-canary-deployment-for-prod.md) | Canary deployment strategy for prod via shared Service selector | Accepted |
 | [0011](0011-terraform-plan-apply-automation.md) | Automated Terraform plan-on-PR and approval-gated apply-on-merge | Accepted |
+| [0012](0012-decouple-terraform-authorization-from-running-identity.md) | Decouple Terraform-managed authorization from the identity running Terraform | Accepted |
 
 ## Conventions
 
