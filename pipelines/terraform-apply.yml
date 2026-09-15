@@ -35,6 +35,7 @@ stages:
                 terraform plan -input=false -out=tfplan
             env:
               TF_VAR_pipeline_service_principal_object_id: $(pipelineServicePrincipalObjectId)
+              TF_VAR_allowed_ip_ranges: '[$(allowedIpRange)]'
           - publish: 'infra/environments/dev/tfplan'
             artifact: 'tfplan'
             displayName: 'Publish plan artifact'
