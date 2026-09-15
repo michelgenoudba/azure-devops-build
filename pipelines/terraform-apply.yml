@@ -1,0 +1,58 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - infra/**
+      - pipelines/terraform-apply.yml
+
+stages:
+  - stage: Plan
+    pool:
+      name: self-hosted-dev
+    jobs:
+      - job: TerraformPlan
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Terraform plan'
+            inputs:
+              azureSubscription: 'sc-azure-devops-build'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                set -e
+                cd infra/environments/dev
+                terraform init -input=false
+                terraform plan -input=false -out=tfplan
+          - publish: 'infra/environments/dev/tfplan'
+            artifact: 'tfplan'
+            displayName: 'Publish plan artifact'
+  - stage: Apply
+    dependsOn: Plan
+    pool:
+      name: self-hosted-dev
+    jobs:
+      - deployment: TerraformApply
+        environment: infra
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+
+                - download: current
+                  artifact: 'tfplan'
+                  displayName: 'Download plan artifact'
+
+                - task: AzureCLI@2
+                  displayName: 'Terraform apply'
+                  inputs:
+                    azureSubscription: 'sc-azure-devops-build'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      set -e
+                      cd infra/environments/dev
+                      terraform init -input=false
+                      terraform apply -input=false "$(Pipeline.Workspace)/tfplan/tfplan"

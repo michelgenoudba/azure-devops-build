@@ -7,14 +7,30 @@ trigger:
       - infra/**
       - pipelines/terraform-scan.yml
 
-pool:
-  vmImage: 'ubuntu-latest'
+jobs:
+  - job: SecurityScan
+    pool:
+      vmImage: 'ubuntu-latest'
+    variables:
+      trivyVersion: '0.74.0'
+    steps:
+      - script: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v$(trivyVersion)
+          trivy config --severity CRITICAL,HIGH --exit-code 1 --tf-vars infra/environments/dev/terraform.tfvars.example infra/environments/dev
+        displayName: 'Terraform security scan (trivy config)'
 
-variables:
-  trivyVersion: '0.74.0'
-
-steps:
-- script: |
-    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v$(trivyVersion)
-    trivy config --severity CRITICAL,HIGH --exit-code 1 --tf-vars infra/environments/dev/terraform.tfvars.example infra/environments/dev
-  displayName: 'Terraform security scan (trivy config)'
+  - job: TerraformPlan
+    pool:
+      name: self-hosted-dev
+    steps:
+      - task: AzureCLI@2
+        displayName: 'Terraform plan (PR review)'
+        inputs:
+          azureSubscription: 'sc-azure-devops-build'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            set -e
+            cd infra/environments/dev
+            terraform init -input=false
+            terraform plan -input=false -var-file=terraform.tfvars.example
