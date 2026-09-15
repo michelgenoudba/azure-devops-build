@@ -115,10 +115,10 @@ resource "azurerm_role_assignment" "aks_acr_pull" {
   principal_id         = module.aks.kubelet_identity_object_id
 }
 
-resource "azurerm_role_assignment" "aks_rbac_cluster_admin_self" {
+resource "azurerm_role_assignment" "aks_rbac_cluster_admin_maintainer" {
   scope                = module.aks.cluster_id
   role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
-  principal_id         = data.azurerm_client_config.current.object_id
+  principal_id         = var.maintainer_object_id
 }
 
 resource "azurerm_role_assignment" "aks_rbac_cluster_admin_pipeline" {
@@ -154,10 +154,16 @@ resource "azurerm_role_assignment" "app_workload_kv_secrets_user" {
 
 # Lets this Terraform identity write/read secrets directly (e.g. the test secret
 # below) — separate from the AKS workload's own scoped "Secrets User" grant above.
-resource "azurerm_role_assignment" "self_kv_secrets_officer" {
+resource "azurerm_role_assignment" "kv_secrets_officer_maintainer" {
   scope                = module.keyvault.key_vault_id
   role_definition_name = "Key Vault Secrets Officer"
-  principal_id         = data.azurerm_client_config.current.object_id
+  principal_id         = var.maintainer_object_id
+}
+
+resource "azurerm_role_assignment" "kv_secrets_officer_pipeline" {
+  scope                = module.keyvault.key_vault_id
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id         = var.pipeline_service_principal_object_id
 }
 
 # Scratch secret used to verify AKS workload identity end-to-end. Safe to delete
@@ -167,5 +173,5 @@ resource "azurerm_key_vault_secret" "workload_identity_test" {
   value        = "hello from AKS workload identity"
   key_vault_id = module.keyvault.key_vault_id
 
-  depends_on = [azurerm_role_assignment.self_kv_secrets_officer]
+    depends_on = [azurerm_role_assignment.kv_secrets_officer_pipeline, azurerm_role_assignment.kv_secrets_officer_maintainer]
 }
