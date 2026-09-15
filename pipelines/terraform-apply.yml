@@ -1,0 +1,78 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - infra/**
+      - pipelines/terraform-apply.yml
+
+stages:
+  - stage: Plan
+    pool:
+      name: self-hosted-dev
+    jobs:
+      - job: TerraformPlan
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Terraform plan'
+            inputs:
+              azureSubscription: 'sc-azure-devops-build'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                set -e
+                if ! command -v terraform >/dev/null 2>&1; then
+                  TERRAFORM_VERSION=1.15.8
+                  sudo apt-get update -qq
+                  sudo apt-get install -y -qq unzip
+                  curl -sfLo /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+                  sudo unzip -o /tmp/terraform.zip -d /usr/local/bin
+                  rm /tmp/terraform.zip
+                fi
+                cd infra/environments/dev
+                terraform init -input=false
+                terraform plan -input=false -out=tfplan
+            env:
+              TF_VAR_pipeline_service_principal_object_id: $(pipelineServicePrincipalObjectId)
+              TF_VAR_allowed_ip_ranges: '[$(allowedIpRange)]'
+              TF_VAR_maintainer_object_id: $(maintainerObjectId)
+          - publish: 'infra/environments/dev/tfplan'
+            artifact: 'tfplan'
+            displayName: 'Publish plan artifact'
+  - stage: Apply
+    dependsOn: Plan
+    pool:
+      name: self-hosted-dev
+    jobs:
+      - deployment: TerraformApply
+        environment: infra
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+
+                - download: current
+                  artifact: 'tfplan'
+                  displayName: 'Download plan artifact'
+
+                - task: AzureCLI@2
+                  displayName: 'Terraform apply'
+                  inputs:
+                    azureSubscription: 'sc-azure-devops-build'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      set -e
+                      if ! command -v terraform >/dev/null 2>&1; then
+                        TERRAFORM_VERSION=1.15.8
+                        sudo apt-get update -qq
+                        sudo apt-get install -y -qq unzip
+                        curl -sfLo /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+                        sudo unzip -o /tmp/terraform.zip -d /usr/local/bin
+                        rm /tmp/terraform.zip
+                      fi
+                      cd infra/environments/dev
+                      terraform init -input=false
+                      terraform apply -input=false "$(Pipeline.Workspace)/tfplan/tfplan"

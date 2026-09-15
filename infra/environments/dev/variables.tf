@@ -32,3 +32,8 @@ variable "pipeline_service_principal_object_id" {
   description = "Object ID of the sc-azure-devops-build service connection's service principal — granted Kubernetes-level Azure RBAC access on the AKS cluster so the CD pipeline can run kubectl/helm against it."
   type        = string
 }
+
+variable "maintainer_object_id" {
+  description = "Object ID of the human maintainer's own Azure AD identity — granted standing Cluster Admin (AKS) and Secrets Officer (Key Vault) independent of whichever identity is currently running Terraform."
+  type        = string
+}
