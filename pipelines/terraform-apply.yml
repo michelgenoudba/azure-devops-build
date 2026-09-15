@@ -33,6 +33,8 @@ stages:
                 cd infra/environments/dev
                 terraform init -input=false
                 terraform plan -input=false -out=tfplan
+            env:
+              TF_VAR_pipeline_service_principal_object_id: $(pipelineServicePrincipalObjectId)
           - publish: 'infra/environments/dev/tfplan'
             artifact: 'tfplan'
             displayName: 'Publish plan artifact'

@@ -7,3 +7,4 @@
 # since it never sees your real gitignored file.
 
 allowed_ip_ranges = ["203.0.113.0/32"]
+pipeline_service_principal_object_id = "00000000-0000-0000-0000-000000000000"
