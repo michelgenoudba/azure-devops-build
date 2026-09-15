@@ -24,6 +24,8 @@ stages:
                 set -e
                 if ! command -v terraform >/dev/null 2>&1; then
                   TERRAFORM_VERSION=1.15.8
+                  sudo apt-get update -qq
+                  sudo apt-get install -y -qq unzip
                   curl -sfLo /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
                   sudo unzip -o /tmp/terraform.zip -d /usr/local/bin
                   rm /tmp/terraform.zip
@@ -61,6 +63,8 @@ stages:
                       set -e
                       if ! command -v terraform >/dev/null 2>&1; then
                         TERRAFORM_VERSION=1.15.8
+                        sudo apt-get update -qq
+                        sudo apt-get install -y -qq unzip
                         curl -sfLo /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
                         sudo unzip -o /tmp/terraform.zip -d /usr/local/bin
                         rm /tmp/terraform.zip
