@@ -144,6 +144,7 @@ stages:
     dependsOn:
       - Build
       - DeployStaging
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
     variables:
       imageTag: $[ stageDependencies.Build.BuildAndPush.outputs['setImageTag.imageTag'] ]
     pool:
@@ -177,6 +178,7 @@ stages:
     dependsOn:
       - Build
       - CanaryProd
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
     variables:
       imageTag: $[ stageDependencies.Build.BuildAndPush.outputs['setImageTag.imageTag'] ]
     pool:
