@@ -34,3 +34,7 @@ output "agent_vm_public_ip" {
   value = module.agent_vm.public_ip_address
 }
 
+output "app_insights_connection_string" {
+  value     = module.app_insights.connection_string
+  sensitive = true
+}

@@ -73,6 +73,20 @@ module "log_analytics" {
   }
 }
 
+module "app_insights" {
+  source = "../../modules/app-insights"
+
+  resource_group_name = data.azurerm_resource_group.main.name
+  location             = data.azurerm_resource_group.main.location
+  name                 = "appi-azure-devops-build-mg"
+  workspace_id         = module.log_analytics.id
+
+  tags = {
+    project     = "azure-devops-build"
+    environment = "dev"
+  }
+}
+
 module "aks" {
   source = "../../modules/aks"
 
