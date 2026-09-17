@@ -24,6 +24,7 @@ version of myself who's forgotten why something was done a certain way.
 | [0010](0010-canary-deployment-for-prod.md) | Canary deployment strategy for prod via shared Service selector | Accepted |
 | [0011](0011-terraform-plan-apply-automation.md) | Automated Terraform plan-on-PR and approval-gated apply-on-merge | Accepted |
 | [0012](0012-decouple-terraform-authorization-from-running-identity.md) | Decouple Terraform-managed authorization from the identity running Terraform | Accepted |
+| [0013](0013-host-source-control-on-github-not-azure-repos.md) | Host source control on GitHub, not Azure Repos | Accepted |
 
 ## Conventions
 
