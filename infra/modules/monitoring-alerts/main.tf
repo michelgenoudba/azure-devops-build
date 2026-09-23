@@ -38,6 +38,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "latency" {
     time_aggregation_method = "Average"
     threshold                = 1000
     operator                 = "GreaterThan"
+    metric_measure_column = "p95Duration"
 
     failing_periods {
       minimum_failing_periods_to_trigger_alert = 1
@@ -73,9 +74,10 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "js_exceptions" {
       | summarize ExceptionCount = count()
     KQL
 
-    time_aggregation_method = "Total"
+    time_aggregation_method  = "Total"
     threshold                = 0
     operator                 = "GreaterThan"
+    metric_measure_column    = "ExceptionCount"
 
     failing_periods {
       minimum_failing_periods_to_trigger_alert = 1
@@ -120,9 +122,10 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "http_error_rate" {
       | project ErrorRatePercent
     KQL
 
-    time_aggregation_method = "Average"
+    time_aggregation_method  = "Average"
     threshold                = 5
     operator                 = "GreaterThan"
+    metric_measure_column    = "ErrorRatePercent"
 
     failing_periods {
       minimum_failing_periods_to_trigger_alert = 1
@@ -158,12 +161,13 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "pod_health" {
       | where Namespace == "app"
       | summarize arg_max(TimeGenerated, PodStatus) by Name
       | where PodStatus != "Running"
-      | count
+      | summarize NotRunningCount = count()
     KQL
 
-    time_aggregation_method = "Total"
+    time_aggregation_method  = "Total"
     threshold                = 0
     operator                 = "GreaterThan"
+    metric_measure_column    = "NotRunningCount"
 
     failing_periods {
       minimum_failing_periods_to_trigger_alert = 1
@@ -212,9 +216,10 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "resource_pressure" {
       | summarize MaxPercentOfLimit = max(PercentOfLimit)
     KQL
 
-    time_aggregation_method = "Average"
+    time_aggregation_method  = "Average"
     threshold                = 80
     operator                 = "GreaterThan"
+    metric_measure_column    = "MaxPercentOfLimit"
 
     failing_periods {
       minimum_failing_periods_to_trigger_alert = 1
