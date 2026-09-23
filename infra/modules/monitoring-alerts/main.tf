@@ -158,7 +158,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "pod_health" {
     query = <<-KQL
       KubePodInventory
       | where TimeGenerated > ago(15m)
-      | where Namespace == "app"
+      | where Namespace in ("app-staging", "app-prod")
       | summarize arg_max(TimeGenerated, PodStatus) by Name
       | where PodStatus != "Running"
       | summarize NotRunningCount = count()
