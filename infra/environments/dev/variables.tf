@@ -37,3 +37,8 @@ variable "maintainer_object_id" {
   description = "Object ID of the human maintainer's own Azure AD identity — granted standing Cluster Admin (AKS) and Secrets Officer (Key Vault) independent of whichever identity is currently running Terraform."
   type        = string
 }
+
+variable "alert_notification_email" {
+  description = "Email address that receives Azure Monitor alert notifications."
+  type        = string
+}

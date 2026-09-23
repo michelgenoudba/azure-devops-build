@@ -25,6 +25,7 @@ version of myself who's forgotten why something was done a certain way.
 | [0011](0011-terraform-plan-apply-automation.md) | Automated Terraform plan-on-PR and approval-gated apply-on-merge | Accepted |
 | [0012](0012-decouple-terraform-authorization-from-running-identity.md) | Decouple Terraform-managed authorization from the identity running Terraform | Accepted |
 | [0013](0013-host-source-control-on-github-not-azure-repos.md) | Host source control on GitHub, not Azure Repos | Accepted |
+| [0014](0014-limit-relative-thresholds-for-monitoring-alerts.md) | imit-relative thresholds and log-query alerts for Phase 07 monitoring | Accepted |
 
 ## Conventions
 

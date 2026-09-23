@@ -87,6 +87,22 @@ module "app_insights" {
   }
 }
 
+module "monitoring_alerts" {
+  source = "../../modules/monitoring-alerts"
+
+  resource_group_name           = data.azurerm_resource_group.main.name
+  location                      = data.azurerm_resource_group.main.location
+  log_analytics_workspace_id    = module.log_analytics_id
+  action_group_name             = "ag-azure-devops-build-mg"
+  action_group_short_name       = "aznotify"
+  notification_email            = var.alter_notification_email 
+
+  tags = {
+    projects        = "azure-devops-build"
+    environment     = "dev"
+  }
+}
+
 module "aks" {
   source = "../../modules/aks"
 
