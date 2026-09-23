@@ -39,6 +39,7 @@ stages:
               TF_VAR_pipeline_service_principal_object_id: $(pipelineServicePrincipalObjectId)
               TF_VAR_allowed_ip_ranges: '[$(allowedIpRange)]'
               TF_VAR_maintainer_object_id: $(maintainerObjectId)
+              TF_VAR_alert_notification_email: $(alertNotificationEmail)
           - publish: 'infra/environments/dev/tfplan'
             artifact: 'tfplan'
             displayName: 'Publish plan artifact'
