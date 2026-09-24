@@ -46,9 +46,9 @@ the private VNet, since the AKS API server and Key Vault are both locked down to
 ## What this project demonstrates
 
 Everything here was built and broken and fixed for real: genuine Terraform errors, genuine pipeline failures,
-genuine Azure API quirks. It maps loosely across all four AZ-400 exam domains (design and implement processes,
-CI, CD, and dependency/security management) — see [`docs/az400-domain-mapping.md`](docs/az400-domain-mapping.md)
-for the detailed breakdown.
+genuine Azure API quirks. It maps loosely across all five AZ-400 exam domains (processes and communications,
+source control, build/release pipelines, security and compliance, and instrumentation) — see
+[`docs/az400-domain-mapping.md`](docs/az400-domain-mapping.md) for the detailed breakdown..
 
 ## Build phases
 
