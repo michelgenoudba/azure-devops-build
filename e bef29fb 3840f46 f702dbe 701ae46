@@ -1,0 +1,122 @@
+aee7d07 2026-09-23 chore(deps): bump hashicorp/azurerm in /infra/environments/dev
+167fd45 2026-09-23 Merge pull request #42 from michelgenoudba/fix/pod-health-alert-namespace
+d08c5d8 2026-09-23 fix:pod healt alert namespace
+665f985 2026-09-23 Merge pull request #41 from michelgenoudba/fix/wire-alert-notification-email-pipeline-var
+8ccece4 2026-09-23 fix: monitoring-alerts/main.tf added variables
+7f9368a 2026-09-23 Merge pull request #40 from michelgenoudba/fix/wire-alert-notification-email-pipeline-var
+2a7302a 2026-09-23 fix: wire alert notification email pipeline
+8e1c8c9 2026-09-23 Merge pull request #39 from michelgenoudba/feature/monitoring-alerts
+dbe036c 2026-09-23 fix: corrected dev/main.tf syntax
+2a3da6e 2026-09-23 fix: corrected main.tf syntax
+4c56edc 2026-09-23 feat:added threshold monitoring for alerts
+eab2238 2026-09-17 Merge pull request #38 from michelgenoudba/feature/app-insights-js-sdk
+bef29fb 2026-09-17 fix(app): drop unnecessary script type attribute for html-validate (AB#<id>)
+52523ca 2026-09-17 feat(app): instrument site with Application JS SDK (AB#35)
+b615501 2026-09-17 Merge pull request #37 from michelgenoudba/feature/app-insights-instrumentation
+bd527da 2026-09-17 feat: app-insight instrumentation
+271a7bd 2026-09-17 Merge pull request #36 from michelgenoudba/docs/phase06-security-plan
+6eac6a2 2026-09-17 docs: add phase 06 security plan (AB#33)
+c64d70e 2026-09-17 Merge pull request #35 from michelgenoudba/docs/adr-0013-github-vs-azure-repos
+5bd1d77 2026-09-17 docs: add 0012-host-source-control-on-github-not-azure-repos.md
+f24cefb 2026-09-16 Merge pull request #34 from michelgenoudba/docs/phase06-secrets-and-dependabot-evidence
+3840f46 2026-09-16 docs: add evidence for Dependabot setup and ci-build production-gate fix (AB#<id>)
+9665474 2026-09-16 Merge pull request #33 from michelgenoudba/fix/gate-ci-build-prod-stages-to-main
+ce7d720 2026-09-16 fix(ci-build): skip CanaryProd and PromoteProd stages on pull request builds
+16bd187 2026-09-16 Merge pull request #32 from michelgenoudba/chore/fix-dependabot-config
+0895133 2026-09-16 chore: remove github-actions ecosystem from dependabot config (no workflow files exist yet)
+fcde2f3 2026-09-16 Merge pull request #29 from michelgenoudba/dependabot/docker/app/nginx-1.31-alpine
+835245b 2026-09-16 Merge pull request #30 from michelgenoudba/dependabot/terraform/infra/environments/dev/hashicorp/azurerm-5.5.0
+f702dbe 2026-09-16 fix(aks): add required node_provisioning_profile block for azurerm v5 (AB#<id>)
+701ae46 2026-09-16 fix(networking): migrate azurerm_subnet to service_endpoint block for azurerm v5 (AB#<id>)
+9461dab 2026-09-16 Merge pull request #31 from michelgenoudba/fix/disable-terraform-apply-pr-trigger
+f15e593 2026-09-16 fix : pr: none in terraform-apply.yml
+cac0d8f 2026-09-16 chore(deps): bump hashicorp/azurerm in /infra/environments/dev
+6185887 2026-09-16 chore(deps): bump nginx from 1.27-alpine to 1.31-alpine in /app
+203ef02 2026-09-16 Merge pull request #28 from michelgenoudba/chore/enable-dependabot
+3c02cc8 2026-09-16 chore: enable dependabot
+191c943 2026-09-15 Merge pull request #27 from michelgenoudba/feature/terraform-plan-apply-pipeline
+32417a2 2026-09-15 docs: add evidence for Terraform PR-time plan and approval-gated merge apply
+6076afb 2026-09-15 Merge pull request #26 from michelgenoudba/feature/terraform-plan-apply-pipeline
+250d1bf 2026-09-15 docs: add ADR 0012 for decoupling Terraform authorization from the running identity
+fa98db1 2026-09-15 fix: decouple Terraform authorization grants from the running identity
+058bc93 2026-09-15 fix: pass allowed_ip_ranges through to terraform-apply to avoid resetting VM/Key Vault firewall
+35a45ef 2026-09-15 fix: supply required pipeline_service_principal_object_id to terraform plan/apply
+46932ed 2026-09-15 fix: install unzip before extracting terraform on self-hosted agent
+2f552ba 2026-09-15 fix: install terraform on self-hosted agent, idempotently
+520285b 2026-09-15 feat: automate terraform plan on PR and approval-gated apply on merge
+1282560 2026-09-14 Merge pull request #25 from michelgenoudba/feature/prod-canary-deployment
+25258d8 2026-09-14 docs: add canary deployment and rollback evidence
+1bf364f 2026-09-14 feat: implement canary deployment strategy for prod
+15fb0d6 2026-09-11 Merge pull request #24 from michelgenoudba/feature/staging-prod-promotion
+1acecc7 2026-09-11 docs: add evidence recording of prod approval gate
+dc2673d 2026-09-11 feat: split CD pipeline into staging/prod stages with approval gate
+b291212 2026-09-10 Merge pull request #23 from michelgenoudba/feature/cd-pipeline-helm-deploy
+9a91f0f 2026-09-10 feat: added CD pipeline execution evidences
+8c6c674 2026-09-10 fix: referenced imageTag correctly as setImageTag.ImageTag
+d71f5fc 2026-09-10 feat: add CD pipeline Deploy stage and required AKS RBAC role
+e8f7eee 2026-09-10 Merge pull request #22 from michelgenoudba/fix/ignore-ssh-keys
+87248ba 2026-09-10 fix: ignore SSH private key files
+92277cb 2026-09-09 Merge pull request #21 from michelgenoudba/feature/helm-static-site
+ce4a83d 2026-09-09 setup Helm chart for static site deployment
+51d4492 2026-09-08 Ignore Claude outputs folder
+07f8d26 2026-09-08 Merge pull request #20 from michelgenoudba/fix/agent-vm-variables-cleanup
+9e1e6cc 2026-09-08 Move stray resources out of variables.tf into main.tf
+3364498 2026-09-08 Merge pull request #19 from michelgenoudba/feature/private-aks-networking
+6d2f2a8 2026-09-08 feat: private AKS networking, Key Vault firewall rules, and self-hosted agent VM
+72f3d09 2026-09-04 Merge pull request #18 from michelgenoudba/feature/ci-lighthouse
+03aeaa9 2026-09-04 added lighthouse evidence
+f498eb0 2026-09-04 updated index.html file
+1373b66 2026-09-04 updated ci-build pipeline with new output
+187887b 2026-09-04 added ci-build step to print console error audit trail
+c6a4e69 2026-09-04 Lock in Lighthouse CI thresholds, surface audit deductions, publish reports
+79feb25 2026-09-04 added step to ci-build.yml pipeline to print lighthouse scores
+63d3881 2026-09-04 add warn-lvel Lighthouse assertions to print scores in CI
+a6cc24d 2026-09-04 Add Lighthouse CI (first pass: collect scores, no gate yet)
+2928ad1 2026-09-03 Merge pull request #17 from michelgenoudba/feature/terraform-scan-gate
+85ced1a 2026-09-03 Add example tfvars so the Terraform scan resolves real values
+562337a 2026-09-03 Scope Trivy Terraform scan to the deployable environment root
+434e499 2026-09-03 Restrict AKS API server access to known IP ranges
+64416a9 2026-09-03 Enable Azure network policy on AKS cluster
+201810f 2026-09-03 Add Terraform security scan gate using trivy config
+6c0d85d 2026-09-03 Merge pull request #16 from michelgenoudba/feature/ci-quality-checks
+bca82f7 2026-09-03 Fix doctype casing to satisfy html-validate:recommended
+36ef460 2026-09-03 Add HTML validation and broken-link check to CI pipeline
+61dac0d 2026-09-03 Merge pull request #15 from michelgenoudba/feature/ci-trivy-scan
+ef95307 2026-09-03 feat: add evidence for phase 04
+9c56490 2026-09-03 Add apk upgrade to pick up patched Alpine packages
+40afd13 2026-09-03 Add Trivy vulnerability scan to CI pipeline
+0675203 2026-09-03 Merge pull request #14 from michelgenoudba/feature/app-dockerfile
+277be88 2026-09-03 Add first CI pipeline: build and push app image to ACR (AB#20)
+a92eb28 2026-09-02 Merge pull request #13 from michelgenoudba/feature/aks-workload-identity-keyvault
+5d10814 2026-09-02 Add AKS workload identity for Key Vault access (AB#19)
+d43a740 2026-09-02 Merge pull request #12 from michelgenoudba/feature/aks-azure-ad-rbac
+13d9955 2026-09-02 Enable Azure AD RBAC for AKS (AB#18) - azure_active_directory_role_based_access_control block: managed AAD integration, azure_rbac_enabled = true - Self-granted Azure Kubernetes Service RBAC Cluster Admin via azurerm_role_assignment, principal resolved from data.azurerm_client_config.current - upgrade_settings explicitly declared on both node pools to eliminate a perpetual Terraform diff - ADR 0007: Azure RBAC for Kubernetes Authorization chosen over native Kubernetes RoleBindings, local admin fallback deliberately kept for now - TROUBLESHOOTING.md: four issues hit setting up AAD RBAC (provider argument changes, kubelogin PATH, upgrade_settings diff) - Verified end-to-end: real device-code AAD login, genuine 403 before role assignment, successful kubectl access after
+f37b9a6 2026-09-01 Merge pull request #11 from michelgenoudba/fix/aks-module-missing-from-ab17
+61fcac9 2026-09-01 Restore changes dropped from AB#14 and AB#17 merges (git add scope bug)
+1151504 2026-09-01 Merge pull request #10 from michelgenoudba/feature/terraform-aks-module
+f20af7b 2026-09-01 Provision AKS cluster via Terraform (AB#17) - New module: infra/modules/aks — system + user node pools, Azure CNI networking - OIDC issuer and workload identity enabled at cluster creation (avoids recreate later in Phase 03) - Container Insights wired to the Phase 02 Log Analytics workspace - AcrPull role assignment for the AKS kubelet identity, scoped to ACR - ADR 0006: Azure CNI networking model, explicit service CIDR (10.100.0.0/16) to avoid VNet overlap - TROUBLESHOOTING.md: SKU availability, service CIDR overlap, and vCPU quota errors hit during first apply - Verified: kubectl get nodes shows both node pools Ready
+aa0a339 2026-08-28 Merge pull request #9 from michelgenoudba/security/tfsec-keyvault-network-acl
+5658714 2026-08-28 Harden Key Vault network access per tfsec scan (AB#14)
+9cefcd4 2026-08-28 Merge pull request #8 from michelgenoudba/docs/environment-separation-adr
+9604354 2026-08-28 Record environment separation strategy (AB#16) - Add ADR 0005: separate directories per environment, not tfvars-parameterized - Add infra/environments/prod/ as a documented placeholder (not provisioned) - Update ADR index
+96801ef 2026-08-28 Merge pull request #7 from michelgenoudba/feature/terraform-loganalytics-module
+f7fdc51 2026-08-28 Add Log Analytics workspace module (AB#15)
+d56e0b5 2026-08-28 Merge pull request #6 from michelgenoudba/feature/terraform-keyvault-module
+5c82968 2026-08-28 feat: add Terraform KeyVault module AB#14
+3265325 2026-08-28 Merge pull request #5 from michelgenoudba/feature/terraform-acr-module
+57d1c1a 2026-08-28 feat: add Terraform ACR module. AB#13
+20e0a48 2026-08-27 Merge pull request #4 from michelgenoudba/feature/terraform-networking-module
+be56179 2026-08-27 feat: Also documents the network topology decision in ADR 0003.
+1cb868f 2026-08-27 feat: add Terraform networking module (VNet + subnets) AB#12 Also documents the network topology decision in ADR 0003.
+2d2b3fb 2026-08-27 Merge pull request #3 from michelgenoudba/feature/terraform-state-backend
+64a301c 2026-08-27 feat: configure Terraform remote state backedn AB#11
+76035c3 2026-08-26 Merge pull request #2 from michelgenoudba/docs/phase01-evidence
+ea78a4d 2026-08-26 docs: add phase 01 evidence and OneDrive/git troubleshooting entry AB#10
+e8cdcd2 2026-08-26 Merge pull request #1 from michelgenoudba/feature/branching-strategy
+7f5cb3d 2026-08-26 docs: add trunk-based branching ADR and PR template AB#10
+4e54421 2026-08-26 created ADR file 0001-scope-identity-to-resource-group.md
+5e047a0 2026-08-26 test: verify OIDC service connection via AzureCLI task
+9213d32 2026-08-25 fix: rename apps-->app and evidences-->evidence, fix screenshot extension .png
+1ee501d 2026-08-25 added png and troubleshouting.md
+fa71af0 2026-08-25 added hello-world.yml file
+954a3b6 2026-08-25 Initial commit
