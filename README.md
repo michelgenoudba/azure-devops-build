@@ -97,19 +97,21 @@ in the commit message, or as a manually-added link where the automatic linking d
 
 ## Repository structure
 
+```
 azure-devops-build/
-├── app/ # Static site source + Dockerfile
-├── helm/static-site/ # Helm chart for staging/prod deployment (incl. canary)
+├── app/                    # Static site source + Dockerfile
+├── helm/static-site/       # Helm chart for staging/prod deployment (incl. canary)
 ├── infra/
-│ ├── environments/ # dev (provisioned), prod (documented placeholder)
-│ └── modules/ # acr, agent-vm, aks, app-insights, keyvault,
-│ # log-analytics, monitoring-alerts, networking
-├── pipelines/ # ci-build, terraform-scan-gate, terraform-apply, hello-world
+│   ├── environments/       # dev (provisioned), prod (documented placeholder)
+│   └── modules/            # acr, agent-vm, aks, app-insights, keyvault,
+│                           # log-analytics, monitoring-alerts, networking
+├── pipelines/              # ci-build, terraform-scan-gate, terraform-apply, hello-world
 ├── docs/
-│ ├── decisions/ # Architecture Decision Records
-│ ├── evidence/ # Screenshots & recordings captured per phase
-│ └── security-plan.md
-└── k8s/ # Workload identity test manifests
+│   ├── decisions/          # Architecture Decision Records
+│   ├── evidence/           # Screenshots & recordings captured per phase
+│   └── security-plan.md
+└── k8s/                    # Workload identity test manifests
+```
 
 
 ## Demo
