@@ -114,6 +114,7 @@ azure-devops-build/
 ```
 
 
-## Demo
 
-_Coming soon: a short narrated walkthrough of the pipeline, the AKS deployment, and the monitoring dashboard._
+A narrated, end-to-end walkthrough of the pipeline: triggering `ci-build` from the Pipelines list, watching it move through Build → DeployStaging → CanaryProd → the `PromoteProd` manual approval gate, and finishing on a fully green production deployment.
+
+▶️ [Watch the demo](https://youtu.be/gJMc1B5YzXM) (~7.5 min)
